@@ -1,0 +1,4 @@
+.quill-no-border .ql-container {
+  border: none; /* Remove border */
+  box-shadow: none; /* Remove shadow if any */
+}

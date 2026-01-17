@@ -1,0 +1,280 @@
+"use client";
+import React, { useState, useEffect } from 'react';
+import { MessageCircle, Share2, ArrowUp, Bookmark, MoreHorizontal } from 'lucide-react';
+import LoadingHome from "@/components/loading/LoadingHome";
+
+const DUMMY_TOPIC = {
+  _id: "topic-1",
+  title: "জামায়াতের ক্ষমতায় যাওয়ার সম্ভাবনা কত %?",
+  total_contributions: 6,
+};
+
+const DUMMY_CONTRIBUTIONS = [
+  {
+    _id: "1",
+    topic_id: "topic-1",
+    content: `এক্টা ভালো পুরস্কার দিতে পারি। আমার কাছে ১৫০০ টাকা আছে। আমি এই টাকা দিয়ে কিছু করতে চাই...`,
+    author: {
+      name: "Rajib Noor Khan",
+      profile_picture: "https://ui-avatars.com/api/?name=Rajib+Noor+Khan&background=0EA5E9&color=fff"
+    },
+    created_at: "21 নভে",
+    likes: 19,
+    comments: 3,
+  },
+  {
+    _id: "2",
+    topic_id: "topic-1",
+    content: `মাদের গুরুত্ব আমার কাছে ১০০ টাকা প্রয়োজন, মাদের পেশ অবশ্য একটু বড় আর একটু ১৫০ টাকা বানাবো কি করবো?`,
+    author: {
+      name: "মইন",
+      profile_picture: "https://ui-avatars.com/api/?name=Moin&background=F59E0B&color=fff"
+    },
+    created_at: "13 নভে",
+    likes: 14,
+    comments: 14,
+  },
+  {
+    _id: "3",
+    topic_id: "topic-1",
+    content: `আপনার কাছে ১০০ টাকার মধ্যে কী?`,
+    author: {
+      name: "সাকিব রহমান",
+      profile_picture: "https://ui-avatars.com/api/?name=Sakib+Rahman&background=8B5CF6&color=fff"
+    },
+    created_at: "10 নভে",
+    likes: 28,
+    comments: 7,
+  },
+  {
+    _id: "4",
+    topic_id: "topic-1",
+    content: `আপনার কাছে সাকিব রহমান ৫০০ টাকার সম্ভাবনা রয়েছে। আপনি দেখতে পারেন...`,
+    author: {
+      name: "তাসনিম আহমেদ",
+      profile_picture: "https://ui-avatars.com/api/?name=Tasnim+Ahmed&background=EC4899&color=fff"
+    },
+    created_at: "8 নভে",
+    likes: 35,
+    comments: 11,
+  },
+  {
+    _id: "5",
+    topic_id: "topic-1",
+    content: `পরিস্থিতিতে জামায়াতের ক্ষমতায় আসার সম্ভাবনা খুবই কম...`,
+    author: {
+      name: "নাদিয়া ইসলাম",
+      profile_picture: "https://ui-avatars.com/api/?name=Nadia+Islam&background=10B981&color=fff"
+    },
+    created_at: "5 নভে",
+    likes: 42,
+    comments: 18,
+  },
+  {
+    _id: "6",
+    topic_id: "topic-1",
+    content: `সম্ভাবনা প্রায় ৫% এর কম। বাংলাদেশের রাজনৈতিক ইতিহাস পর্যালোচনা করলে...`,
+    author: {
+      name: "ফারহান খান",
+      profile_picture: "https://ui-avatars.com/api/?name=Farhan+Khan&background=3B82F6&color=fff"
+    },
+    created_at: "3 নভে",
+    likes: 22,
+    comments: 9,
+  }
+];
+
+const ContributionCard = ({ contribution }) => {
+  const [upvotes, setUpvotes] = useState(contribution.likes);
+  const [userVote, setUserVote] = useState(null);
+
+  const handleUpvote = () => {
+    if (userVote === 'up') {
+      setUpvotes(prev => prev - 1);
+      setUserVote(null);
+    } else {
+      setUpvotes(prev => prev + (userVote === 'down' ? 2 : 1));
+      setUserVote('up');
+    }
+  };
+
+  return (
+    <div className="p-4 border bg-white border-gray-200 dark:border-gray-700 rounded-lg">
+      {/* Author Info */}
+      <div className="flex items-center gap-3 mb-3">
+        <img 
+          src={contribution.author.profile_picture} 
+          alt={contribution.author.name}
+          className="w-9 h-9 rounded-full"
+        />
+        <div className="min-w-0 flex-1">
+          <p className="text-sm font-semibold text-gray-900 dark:text-gray-100">
+            {contribution.author.name}
+          </p>
+          <p className="text-xs text-gray-500 dark:text-gray-400">
+            {contribution.created_at}
+          </p>
+        </div>
+        <button className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
+          <MoreHorizontal size={18} />
+        </button>
+      </div>
+
+      {/* Content */}
+      <p className="text-sm text-gray-700 dark:text-gray-300 leading-relaxed mb-3">
+        {contribution.content}
+      </p>
+
+      {/* Actions */}
+      <div className="flex items-center gap-6 text-xs text-gray-500 dark:text-gray-400 pt-3 border-t border-gray-100 dark:border-gray-700">
+        <button 
+          onClick={handleUpvote}
+          className={`flex items-center gap-1 transition-colors ${
+            userVote === 'up' ? 'text-blue-600 dark:text-blue-400' : 'hover:text-gray-700 dark:hover:text-gray-300'
+          }`}
+        >
+          <ArrowUp size={16} />
+          <span>{upvotes}</span>
+        </button>
+
+        <button className="flex items-center gap-1 hover:text-gray-700 dark:hover:text-gray-300 transition-colors">
+          <MessageCircle size={16} />
+          <span>{contribution.comments}</span>
+        </button>
+
+        <button className="flex items-center gap-1 hover:text-gray-700 dark:hover:text-gray-300 transition-colors">
+          <Share2 size={16} />
+        </button>
+
+        <button className="ml-auto text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
+          <Bookmark size={16} />
+        </button>
+      </div>
+    </div>
+  );
+};
+
+const TopicDetailPage = () => {
+  const [topic, setTopic] = useState(null);
+  const [contributions, setContributions] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchTopicData = async () => {
+      try {
+        setLoading(true);
+        await new Promise(resolve => setTimeout(resolve, 800));
+        
+        setTopic(DUMMY_TOPIC);
+        setContributions(DUMMY_CONTRIBUTIONS);
+        
+      } catch (error) {
+        console.error('Error fetching topic:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchTopicData();
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 pt-20">
+        <LoadingHome />
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 pt-16 px-4">
+      <div className="max-w-5xl mx-auto flex gap-4">
+        {/* Main Content */}
+        <div className="flex-1">
+          {/* Topic Header */}
+          <div className="bg-white border border-gray-200 dark:bg-gray-800 rounded-lg p-4 mb-4">
+            <h1 className="text-lg font-bold text-gray-900 dark:text-gray-100 mb-4 leading-snug">
+              {topic.title}
+            </h1>
+
+            <div className="flex items-center gap-4 text-sm text-gray-600 dark:text-gray-400">
+              <span>{topic.total_contributions}টি উত্তর</span>
+              <button className="text-blue-600 dark:text-blue-400 hover:underline font-medium">
+                লিখো
+              </button>
+            </div>
+          </div>
+
+          {/* Contributions List */}
+          <div className="space-y-3">
+            {contributions.map((contribution) => (
+              <div key={contribution._id}>
+                <ContributionCard contribution={contribution} />
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Right Sidebar */}
+        <div className="w-80 hidden lg:block">
+          {/* Top Button */}
+          <div className="bg-white dark:bg-gray-800 rounded-full border-2 border-gray-200 dark:border-blue-500 p-3 mb-4 flex items-center gap-2">
+            <span className="text-blue-600 dark:text-blue-400 text-lg">↗️</span>
+            <span className="text-sm font-semibold text-blue-600 dark:text-blue-400">উন্মোচন দিন · ৯</span>
+          </div>
+
+          {/* Related Notes */}
+          <div className="bg-white dark:bg-gray-800 rounded-lg p-4 mb-4">
+            <h3 className="text-sm font-bold text-gray-900 dark:text-gray-100 mb-4">সম্পর্কিত নোটস</h3>
+            
+            <div className="space-y-4">
+              <div className="border-b border-gray-100 dark:border-gray-700 pb-4 last:border-b-0">
+                <p className="text-sm text-blue-600 dark:text-blue-400 hover:underline cursor-pointer font-medium">
+                  এক্টা ভালো পুরস্কার দিতে পারি। আমার কাছে ১৫০০ টাকা আছে...
+                </p>
+              </div>
+
+              <div className="border-b border-gray-100 dark:border-gray-700 pb-4 last:border-b-0">
+                <p className="text-sm text-blue-600 dark:text-blue-400 hover:underline cursor-pointer font-medium">
+                  মাদের গুরুত্ব আমার কাছে ১০০ টাকা প্রয়োজন, মাদের পেশ অবশ্য...
+                </p>
+              </div>
+
+              <div className="border-b border-gray-100 dark:border-gray-700 pb-4 last:border-b-0">
+                <p className="text-sm text-blue-600 dark:text-blue-400 hover:underline cursor-pointer font-medium">
+                  আপনার কাছে ১০০ টাকার মধ্যে কী?
+                </p>
+              </div>
+
+              <div className="border-b border-gray-100 dark:border-gray-700 pb-4 last:border-b-0">
+                <p className="text-sm text-blue-600 dark:text-blue-400 hover:underline cursor-pointer font-medium">
+                  আপনার কাছে সাকিব রহমান ৫০০ টাকার সম্ভাবনা রয়েছে...
+                </p>
+              </div>
+
+              <div className="border-b border-gray-100 dark:border-gray-700 pb-4 last:border-b-0">
+                <p className="text-sm text-blue-600 dark:text-blue-400 hover:underline cursor-pointer font-medium">
+                  পরিস্থিতিতে জামায়াতের ক্ষমতায় আসার সম্ভাবনা খুবই কম...
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* Action Buttons */}
+          <div className="bg-white dark:bg-gray-800 rounded-lg p-4 space-y-3">
+            <button className="w-full flex items-center gap-2 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 transition-colors p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700">
+              🔔
+              <span className="text-sm font-medium">অনুসরণ</span>
+            </button>
+            <button className="w-full flex items-center gap-2 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 transition-colors p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700">
+              ⋯
+              <span className="text-sm font-medium">আরও</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default TopicDetailPage;

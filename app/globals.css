@@ -1,0 +1,55 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Base body styles */
+body {
+  @apply bg-white text-black transition-colors;
+  padding: 0;
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,
+    Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
+  background-color: #F9FAFB;
+}
+
+.dark body {
+  @apply bg-gray-900 text-white;
+}
+
+/* Remove border from quill editor */
+.quill-no-border .ql-container {
+  border: none;
+  box-shadow: none;
+}
+
+/* Heart burst animation */
+@keyframes heartBurst {
+  0% {
+    transform: scale(0);
+    opacity: 0;
+  }
+  15% {
+    transform: scale(1.2);
+    opacity: 0.9;
+  }
+  30% {
+    transform: scale(0.9);
+    opacity: 0.8;
+  }
+  45% {
+    transform: scale(1.1);
+    opacity: 0.9;
+  }
+  80% {
+    transform: scale(1);
+    opacity: 0.7;
+  }
+  100% {
+    transform: scale(0);
+    opacity: 0;
+  }
+}
+
+.animate-heart-burst {
+  animation: heartBurst 1s ease-in-out forwards;
+}
